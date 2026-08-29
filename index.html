@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="he" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Smart Plate - Get To Know Meeting</title>
+<title>Smart Plate - פגישת היכרות</title>
 <style>
   :root{
     --bg:#f5f6f8;
@@ -25,6 +25,8 @@
     color:var(--text);
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     padding:24px 16px 60px;
+    direction:rtl;
+    text-align:right;
   }
   .wrap{max-width:760px;margin:0 auto}
 
@@ -76,6 +78,8 @@
     padding:22px;
     margin-bottom:16px;
     box-shadow:0 1px 3px rgba(0,0,0,.05);
+    text-align:right;
+    direction:rtl;
   }
   .card h2{
     font-size:13px;
@@ -106,6 +110,7 @@
     font-size:14px;
     width:100%;
     text-align:right;
+    direction:ltr;
   }
   .row input:focus{outline:none;border-color:var(--teal)}
   .row .pct{
@@ -113,6 +118,7 @@
     color:var(--muted);
     text-align:right;
     font-weight:600;
+    direction:ltr;
   }
 
   .sales-row{
@@ -133,6 +139,7 @@
     font-size:14px;
     width:100%;
     text-align:right;
+    direction:ltr;
   }
 
   .summary{
@@ -148,7 +155,7 @@
     padding:16px;
     text-align:center;
   }
-  .stat .val{font-size:26px;font-weight:800}
+  .stat .val{font-size:26px;font-weight:800;direction:ltr}
   .stat .lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:4px}
 
   .prime-box{
@@ -159,7 +166,7 @@
     padding:20px;
     text-align:center;
   }
-  .prime-box .val{font-size:38px;font-weight:900}
+  .prime-box .val{font-size:38px;font-weight:900;direction:ltr}
   .prime-box .lbl{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:4px}
   .prime-box .target{font-size:11px;color:var(--muted);margin-top:6px}
 
@@ -184,57 +191,57 @@
 
   <header>
     <img src="https://smartplatebasic.com/img/new_logo.png" alt="Smart Plate">
-    <h1>Smart Plate - Get To Know Meeting</h1>
+    <h1>Smart Plate - פגישת היכרות</h1>
     <div class="hebrew-line"><span>ניתוח עליות פריים קוסט לפני תחילת עבודה משותפת</span></div>
   </header>
 
   <div class="tabs">
-    <button class="tab-btn active" data-tab="current" onclick="switchTab('current')">CURRENT</button>
-    <button class="tab-btn" data-tab="goal" onclick="switchTab('goal')">GOAL</button>
+    <button class="tab-btn active" data-tab="current" onclick="switchTab('current')">מצב נוכחי</button>
+    <button class="tab-btn" data-tab="goal" onclick="switchTab('goal')">מטרה</button>
   </div>
 
   <!-- CURRENT TAB -->
   <div class="panel active" id="panel-current">
     <div class="card">
-      <h2>Sales</h2>
+      <h2>מכירות</h2>
       <div class="sales-row">
-        <div class="label">Sales (incl. VAT)</div>
-        <input type="number" id="current-sales-vat"  oninput="calc('current')">
+        <div class="label">מכירות (כולל מע"מ)</div>
+        <input type="number" id="current-sales-vat" oninput="calc('current')">
       </div>
       <div class="sales-row">
-        <div class="label">Sales (excl. VAT)<br><small style="color:var(--muted);font-weight:400">auto = incl. VAT / 1.18, or type your own</small></div>
-        <input type="number" id="current-sales-net"  oninput="calc('current')">
+        <div class="label">מכירות (לא כולל מע"מ)<br><small style="color:var(--muted);font-weight:400">אוטומטי = כולל מע"מ ÷ 1.18, או הזן ידנית</small></div>
+        <input type="number" id="current-sales-net" oninput="onNetInput('current')">
       </div>
     </div>
 
     <div class="card">
-      <h2>Costs</h2>
+      <h2>עלויות</h2>
       <div class="row">
-        <div class="label">Food Cost</div>
-        <input type="number" id="current-food"  oninput="calc('current')">
+        <div class="label">עלות מזון</div>
+        <input type="number" id="current-food" oninput="calc('current')">
         <div class="pct" id="current-food-pct"></div>
       </div>
       <div class="row">
-        <div class="label">Labor Cost</div>
-        <input type="number" id="current-labor"  oninput="calc('current')">
+        <div class="label">עלות שכר</div>
+        <input type="number" id="current-labor" oninput="calc('current')">
         <div class="pct" id="current-labor-pct"></div>
       </div>
       <div class="row">
-        <div class="label">Rent</div>
-        <input type="number" id="current-rent"  oninput="calc('current')">
+        <div class="label">שכר דירה</div>
+        <input type="number" id="current-rent" oninput="calc('current')">
         <div class="pct" id="current-rent-pct"></div>
       </div>
     </div>
 
     <div class="card">
-      <h2>Summary</h2>
+      <h2>סיכום</h2>
       <div class="summary">
-        <div class="stat"><div class="val" id="current-sales-net-display"></div><div class="lbl">Net Sales</div></div>
-        <div class="stat"><div class="val" id="current-total-cost-pct"></div><div class="lbl">Food + Labor + Rent</div></div>
+        <div class="stat"><div class="val" id="current-sales-net-display"></div><div class="lbl">מכירות נטו</div></div>
+        <div class="stat"><div class="val" id="current-total-cost-pct"></div><div class="lbl">מזון + שכר + שכר דירה</div></div>
         <div class="prime-box">
           <div class="val" id="current-prime-pct"></div>
-          <div class="lbl">Prime Cost (Food + Labor)</div>
-          <div class="target">Target: ≤ 60%</div>
+          <div class="lbl">פריים קוסט (מזון + שכר)</div>
+          <div class="target">יעד: עד 60%</div>
         </div>
       </div>
     </div>
@@ -243,51 +250,51 @@
   <!-- GOAL TAB -->
   <div class="panel" id="panel-goal">
     <div class="card">
-      <h2>Sales</h2>
+      <h2>מכירות</h2>
       <div class="sales-row">
-        <div class="label">Sales (incl. VAT)</div>
-        <input type="number" id="goal-sales-vat"  oninput="calc('goal')">
+        <div class="label">מכירות (כולל מע"מ)</div>
+        <input type="number" id="goal-sales-vat" oninput="calc('goal')">
       </div>
       <div class="sales-row">
-        <div class="label">Sales (excl. VAT)<br><small style="color:var(--muted);font-weight:400">auto = incl. VAT / 1.18, or type your own</small></div>
-        <input type="number" id="goal-sales-net"  oninput="calc('goal')">
+        <div class="label">מכירות (לא כולל מע"מ)<br><small style="color:var(--muted);font-weight:400">אוטומטי = כולל מע"מ ÷ 1.18, או הזן ידנית</small></div>
+        <input type="number" id="goal-sales-net" oninput="onNetInput('goal')">
       </div>
     </div>
 
     <div class="card">
-      <h2>Costs</h2>
+      <h2>עלויות</h2>
       <div class="row">
-        <div class="label">Food Cost</div>
-        <input type="number" id="goal-food"  oninput="calc('goal')">
+        <div class="label">עלות מזון</div>
+        <input type="number" id="goal-food" oninput="calc('goal')">
         <div class="pct" id="goal-food-pct"></div>
       </div>
       <div class="row">
-        <div class="label">Labor Cost</div>
-        <input type="number" id="goal-labor"  oninput="calc('goal')">
+        <div class="label">עלות שכר</div>
+        <input type="number" id="goal-labor" oninput="calc('goal')">
         <div class="pct" id="goal-labor-pct"></div>
       </div>
       <div class="row">
-        <div class="label">Rent</div>
-        <input type="number" id="goal-rent"  oninput="calc('goal')">
+        <div class="label">שכר דירה</div>
+        <input type="number" id="goal-rent" oninput="calc('goal')">
         <div class="pct" id="goal-rent-pct"></div>
       </div>
     </div>
 
     <div class="card">
-      <h2>Summary</h2>
+      <h2>סיכום</h2>
       <div class="summary">
-        <div class="stat"><div class="val" id="goal-sales-net-display"></div><div class="lbl">Net Sales</div></div>
-        <div class="stat"><div class="val" id="goal-total-cost-pct"></div><div class="lbl">Food + Labor + Rent</div></div>
+        <div class="stat"><div class="val" id="goal-sales-net-display"></div><div class="lbl">מכירות נטו</div></div>
+        <div class="stat"><div class="val" id="goal-total-cost-pct"></div><div class="lbl">מזון + שכר + שכר דירה</div></div>
         <div class="prime-box">
           <div class="val" id="goal-prime-pct"></div>
-          <div class="lbl">Prime Cost (Food + Labor)</div>
-          <div class="target">Target: ≤ 60%</div>
+          <div class="lbl">פריים קוסט (מזון + שכר)</div>
+          <div class="target">יעד: עד 60%</div>
         </div>
       </div>
     </div>
   </div>
 
-  <footer>Smart Plate Restaurant Consultants — Prime Cost analysis prior to onboarding</footer>
+  <footer>Smart Plate יועצים למסעדות — ניתוח פריים קוסט לפני תחילת עבודה משותפת</footer>
 </div>
 
 <script>
@@ -309,6 +316,13 @@ function pctStr(v){
   return v === null ? '' : v.toFixed(1) + '%';
 }
 
+// called when the user types directly into the Net Sales box — marks it as a manual override
+function onNetInput(prefix){
+  const netInput = document.getElementById(prefix+'-sales-net');
+  netInput.dataset.manual = netInput.value === '' ? 'false' : 'true';
+  calc(prefix);
+}
+
 function calc(prefix){
   const vatInput = document.getElementById(prefix+'-sales-vat');
   const netInput = document.getElementById(prefix+'-sales-net');
@@ -317,10 +331,11 @@ function calc(prefix){
   const rentInput = document.getElementById(prefix+'-rent');
 
   const salesVat = parseFloat(vatInput.value) || 0;
+  const manual = netInput.dataset.manual === 'true';
 
-  // auto-fill Net Sales box visibly from Gross, but never overwrite a value the user typed themselves
-  if(netInput.value === '' && salesVat > 0){
-    netInput.value = (salesVat / 1.18).toFixed(2);
+  // keep auto-filling live on every keystroke of the VAT field, unless the user manually typed their own Net value
+  if(!manual){
+    netInput.value = salesVat > 0 ? (salesVat / 1.18).toFixed(2) : '';
   }
 
   const salesNet = parseFloat(netInput.value) || 0;

@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Plate - Get To Know Meeting</title>
+<style>
+  :root{
+    --bg:#0b0d10;
+    --card:#15181d;
+    --card2:#1c2027;
+    --border:#2a2f38;
+    --teal:#14b8a6;
+    --teal-dim:#0d8f81;
+    --text:#eef1f4;
+    --muted:#8b93a1;
+    --green:#22c55e;
+    --orange:#f59e0b;
+    --red:#ef4444;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    padding:24px 16px 60px;
+  }
+  .wrap{max-width:760px;margin:0 auto}
+
+  header{text-align:center;margin-bottom:28px}
+  header img{height:64px;margin-bottom:14px;filter:drop-shadow(0 0 12px rgba(20,184,166,.15))}
+  header h1{font-size:24px;font-weight:800;margin:0 0 8px;letter-spacing:.2px}
+  header .hebrew-line{
+    direction:rtl;
+    text-align:right;
+    display:flex;
+    justify-content:center;
+  }
+  header .hebrew-line span{
+    font-size:15px;
+    color:var(--muted);
+    border-top:1px solid var(--border);
+    padding-top:10px;
+    display:inline-block;
+    direction:rtl;
+    text-align:right;
+  }
+
+  .tabs{display:flex;justify-content:center;gap:10px;margin-bottom:24px}
+  .tab-btn{
+    background:var(--card);
+    border:1px solid var(--border);
+    color:var(--muted);
+    padding:10px 28px;
+    border-radius:10px;
+    font-size:14px;
+    font-weight:700;
+    letter-spacing:.5px;
+    cursor:pointer;
+    transition:all .15s;
+  }
+  .tab-btn.active{
+    background:var(--teal);
+    color:#04201c;
+    border-color:var(--teal);
+  }
+
+  .panel{display:none}
+  .panel.active{display:block}
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:22px;
+    margin-bottom:16px;
+  }
+  .card h2{
+    font-size:13px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    color:var(--muted);
+    margin:0 0 16px;
+    font-weight:700;
+  }
+
+  .row{
+    display:grid;
+    grid-template-columns:1fr 140px 90px;
+    gap:12px;
+    align-items:center;
+    padding:10px 0;
+    border-bottom:1px solid var(--border);
+  }
+  .row:last-child{border-bottom:none}
+  .row .label{font-size:14px;color:var(--text);font-weight:600}
+  .row .label small{display:block;color:var(--muted);font-weight:400;font-size:11px;margin-top:2px}
+  .row input{
+    background:var(--card2);
+    border:1px solid var(--border);
+    color:var(--text);
+    padding:9px 10px;
+    border-radius:8px;
+    font-size:14px;
+    width:100%;
+    text-align:right;
+  }
+  .row input:focus{outline:none;border-color:var(--teal)}
+  .row .pct{
+    font-size:13px;
+    color:var(--muted);
+    text-align:right;
+    font-weight:600;
+  }
+
+  .sales-row{
+    display:grid;
+    grid-template-columns:1fr 140px;
+    gap:12px;
+    align-items:center;
+    padding:10px 0;
+    border-bottom:1px solid var(--border);
+  }
+  .sales-row .label{font-size:14px;color:var(--text);font-weight:600}
+  .sales-row input{
+    background:var(--card2);
+    border:1px solid var(--border);
+    color:var(--text);
+    padding:9px 10px;
+    border-radius:8px;
+    font-size:14px;
+    width:100%;
+    text-align:right;
+  }
+
+  .summary{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+    margin-top:6px;
+  }
+  .stat{
+    background:var(--card2);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:16px;
+    text-align:center;
+  }
+  .stat .val{font-size:26px;font-weight:800}
+  .stat .lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:4px}
+
+  .prime-box{
+    grid-column:1 / -1;
+    background:var(--card2);
+    border:2px solid var(--teal);
+    border-radius:14px;
+    padding:20px;
+    text-align:center;
+  }
+  .prime-box .val{font-size:38px;font-weight:900}
+  .prime-box .lbl{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:4px}
+  .prime-box .target{font-size:11px;color:var(--muted);margin-top:6px}
+
+  .green{color:var(--green)}
+  .orange{color:var(--orange)}
+  .red{color:var(--red)}
+
+  footer{text-align:center;margin-top:30px;color:var(--muted);font-size:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <img src="https://smartplatebasic.com/img/new_logo.png" alt="Smart Plate">
+    <h1>Smart Plate - Get To Know Meeting</h1>
+    <div class="hebrew-line"><span>ניתוח עליות פריים קוסט לפני תחילת עבודה משותפת</span></div>
+  </header>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="current" onclick="switchTab('current')">CURRENT</button>
+    <button class="tab-btn" data-tab="goal" onclick="switchTab('goal')">GOAL</button>
+  </div>
+
+  <!-- CURRENT TAB -->
+  <div class="panel active" id="panel-current">
+    <div class="card">
+      <h2>Sales</h2>
+      <div class="sales-row">
+        <div class="label">Sales (incl. VAT)</div>
+        <input type="number" id="current-sales-vat" placeholder="0" oninput="calc('current')">
+      </div>
+      <div class="sales-row">
+        <div class="label">Sales (excl. VAT)<br><small style="color:var(--muted);font-weight:400">auto = incl. VAT / 1.18, or type your own</small></div>
+        <input type="number" id="current-sales-net" placeholder="0" oninput="calc('current', true)">
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Costs</h2>
+      <div class="row">
+        <div class="label">Food Cost</div>
+        <input type="number" id="current-food" placeholder="0" oninput="calc('current')">
+        <div class="pct" id="current-food-pct">0%</div>
+      </div>
+      <div class="row">
+        <div class="label">Labor Cost</div>
+        <input type="number" id="current-labor" placeholder="0" oninput="calc('current')">
+        <div class="pct" id="current-labor-pct">0%</div>
+      </div>
+      <div class="row">
+        <div class="label">Rent</div>
+        <input type="number" id="current-rent" placeholder="0" oninput="calc('current')">
+        <div class="pct" id="current-rent-pct">0%</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Summary</h2>
+      <div class="summary">
+        <div class="stat"><div class="val" id="current-sales-net-display">₪0</div><div class="lbl">Net Sales</div></div>
+        <div class="stat"><div class="val" id="current-total-cost-pct">0%</div><div class="lbl">Food + Labor + Rent</div></div>
+        <div class="prime-box">
+          <div class="val" id="current-prime-pct">0%</div>
+          <div class="lbl">Prime Cost (Food + Labor)</div>
+          <div class="target">Target: ≤ 60%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GOAL TAB -->
+  <div class="panel" id="panel-goal">
+    <div class="card">
+      <h2>Sales</h2>
+      <div class="sales-row">
+        <div class="label">Sales (incl. VAT)</div>
+        <input type="number" id="goal-sales-vat" placeholder="0" oninput="calc('goal')">
+      </div>
+      <div class="sales-row">
+        <div class="label">Sales (excl. VAT)<br><small style="color:var(--muted);font-weight:400">auto = incl. VAT / 1.18, or type your own</small></div>
+        <input type="number" id="goal-sales-net" placeholder="0" oninput="calc('goal', true)">
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Costs</h2>
+      <div class="row">
+        <div class="label">Food Cost</div>
+        <input type="number" id="goal-food" placeholder="0" oninput="calc('goal')">
+        <div class="pct" id="goal-food-pct">0%</div>
+      </div>
+      <div class="row">
+        <div class="label">Labor Cost</div>
+        <input type="number" id="goal-labor" placeholder="0" oninput="calc('goal')">
+        <div class="pct" id="goal-labor-pct">0%</div>
+      </div>
+      <div class="row">
+        <div class="label">Rent</div>
+        <input type="number" id="goal-rent" placeholder="0" oninput="calc('goal')">
+        <div class="pct" id="goal-rent-pct">0%</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Summary</h2>
+      <div class="summary">
+        <div class="stat"><div class="val" id="goal-sales-net-display">₪0</div><div class="lbl">Net Sales</div></div>
+        <div class="stat"><div class="val" id="goal-total-cost-pct">0%</div><div class="lbl">Food + Labor + Rent</div></div>
+        <div class="prime-box">
+          <div class="val" id="goal-prime-pct">0%</div>
+          <div class="lbl">Prime Cost (Food + Labor)</div>
+          <div class="target">Target: ≤ 60%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>Smart Plate Restaurant Consultants — Prime Cost analysis prior to onboarding</footer>
+</div>
+
+<script>
+function switchTab(tab){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active', b.dataset.tab===tab));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+tab).classList.add('active');
+}
+
+function fmt(n){
+  if(!isFinite(n)) return '₪0';
+  return '₪' + Math.round(n).toLocaleString('en-US');
+}
+
+function calc(prefix, netTyped){
+  const salesVat = parseFloat(document.getElementById(prefix+'-sales-vat').value) || 0;
+  const netInput = document.getElementById(prefix+'-sales-net');
+  let salesNet = parseFloat(netInput.value) || 0;
+
+  // auto-fill net sales from gross if user hasn't typed their own net value
+  if(!netTyped && !netInput.value && salesVat > 0){
+    salesNet = salesVat / 1.18;
+  }
+  if(salesNet === 0 && salesVat > 0){
+    salesNet = salesVat / 1.18;
+  }
+
+  const food = parseFloat(document.getElementById(prefix+'-food').value) || 0;
+  const labor = parseFloat(document.getElementById(prefix+'-labor').value) || 0;
+  const rent = parseFloat(document.getElementById(prefix+'-rent').value) || 0;
+
+  const foodPct = salesNet > 0 ? (food/salesNet*100) : 0;
+  const laborPct = salesNet > 0 ? (labor/salesNet*100) : 0;
+  const rentPct = salesNet > 0 ? (rent/salesNet*100) : 0;
+  const primePct = foodPct + laborPct;
+  const totalPct = foodPct + laborPct + rentPct;
+
+  document.getElementById(prefix+'-food-pct').textContent = foodPct.toFixed(1)+'%';
+  document.getElementById(prefix+'-labor-pct').textContent = laborPct.toFixed(1)+'%';
+  document.getElementById(prefix+'-rent-pct').textContent = rentPct.toFixed(1)+'%';
+  document.getElementById(prefix+'-sales-net-display').textContent = fmt(salesNet);
+  document.getElementById(prefix+'-total-cost-pct').textContent = totalPct.toFixed(1)+'%';
+
+  const primeEl = document.getElementById(prefix+'-prime-pct');
+  primeEl.textContent = primePct.toFixed(1)+'%';
+  primeEl.className = 'val ' + (primePct<=60?'green':primePct<=65?'orange':'red');
+}
+
+calc('current');
+calc('goal');
+</script>
+</body>
+</html>

@@ -278,8 +278,7 @@
     <div class="card">
       <h2>סיכום</h2>
       <div class="summary">
-        <div class="stat"><div class="val" id="current-sales-net-display"></div><div class="lbl">מכירות נטו</div></div>
-        <div class="stat"><div class="val" id="current-total-cost-pct"></div><div class="lbl">מזון + שכר + שכר דירה</div></div>
+        <div class="stat" style="grid-column:1 / -1"><div class="val" id="current-sales-net-display"></div><div class="lbl">מכירות נטו</div></div>
         <div class="prime-box">
           <div class="val" id="current-prime-pct"></div>
           <div class="lbl">פריים קוסט (מזון + שכר)</div>
@@ -325,8 +324,7 @@
     <div class="card">
       <h2>סיכום</h2>
       <div class="summary">
-        <div class="stat"><div class="val" id="goal-sales-net-display"></div><div class="lbl">מכירות נטו</div></div>
-        <div class="stat"><div class="val" id="goal-total-cost-pct"></div><div class="lbl">מזון + שכר + שכר דירה</div></div>
+        <div class="stat" style="grid-column:1 / -1"><div class="val" id="goal-sales-net-display"></div><div class="lbl">מכירות נטו</div></div>
         <div class="prime-box">
           <div class="val" id="goal-prime-pct"></div>
           <div class="lbl">פריים קוסט (מזון + שכר)</div>
@@ -594,9 +592,6 @@ function calc(prefix, skipNetDerive){
   document.getElementById(prefix+'-sales-net-display').textContent = salesNet > 0 ? fmt(salesNet) : '';
 
   const primePct = (foodPct === null && laborPct === null) ? null : ((foodPct||0) + (laborPct||0));
-  const totalPct = (foodPct === null && laborPct === null && rentPct === null) ? null : ((foodPct||0) + (laborPct||0) + (rentPct||0));
-
-  document.getElementById(prefix+'-total-cost-pct').textContent = pctStr(totalPct);
 
   const primeEl = document.getElementById(prefix+'-prime-pct');
   primeEl.textContent = pctStr(primePct);

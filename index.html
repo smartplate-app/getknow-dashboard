@@ -185,20 +185,46 @@
     -moz-appearance:textfield;
   }
 
-  /* --- live demo visual (same animation used on the Smart Plate Basic site) --- */
-  .demo-visual{position:relative;width:100%;height:160px;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:6px 0 4px}
-  .chart-svg{width:100%;max-width:320px;height:120px;overflow:visible;margin:0 auto;display:block}
-  .bar{fill:var(--teal);transform-box:fill-box;transform-origin:bottom;animation:barPulse 2.2s ease-in-out infinite}
-  .bar2{animation-delay:.18s}
-  .bar3{animation-delay:.36s}
-  .bar4{animation-delay:.54s}
-  .bar5{animation-delay:.72s}
-  @keyframes barPulse{0%,100%{transform:scaleY(.65)}50%{transform:scaleY(1)}}
-  .target-line{stroke:var(--red);stroke-width:2;stroke-dasharray:6 5;opacity:.85}
-  .target-label{fill:var(--red);font-size:13px;font-weight:800}
-  .demo-caption{font-size:13px;color:var(--muted);font-weight:800;letter-spacing:.3px;margin-top:8px;direction:ltr}
-  .demo-caption span{color:var(--teal)}
-  .demo-note{color:var(--muted);font-size:13px;margin-top:16px;line-height:1.7}
+  /* --- live demo: animated replica of the real dashboard --- */
+  .demo-header{background:#14171f;color:#fff;border-radius:14px 14px 0 0;padding:14px 18px;display:flex;align-items:center;gap:10px;font-weight:700;font-size:14px}
+  .live-dot{margin-inline-start:auto;width:9px;height:9px;border-radius:50%;background:#22c55e;flex-shrink:0;animation:liveDot 1.8s infinite}
+  @keyframes liveDot{0%{box-shadow:0 0 0 0 rgba(34,197,94,.6)}70%{box-shadow:0 0 0 8px rgba(34,197,94,0)}100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}}
+
+  .demo-prediction{background:#e8f7ee;border-radius:0 0 14px 14px;padding:20px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:14px;margin-bottom:16px}
+  .demo-pred-value{font-size:30px;font-weight:800;color:#15803d;direction:ltr}
+  .demo-pred-text{text-align:right;font-size:12px;color:#4b5563;max-width:340px}
+  .demo-pred-sub{margin-top:2px;color:#6b7280}
+  .demo-pill{display:inline-block;margin-top:8px;background:#fff;border:1px solid #86efac;color:#15803d;font-size:11px;font-weight:700;padding:4px 12px;border-radius:999px}
+
+  .demo-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  @media (min-width:600px){.demo-grid{grid-template-columns:repeat(4,1fr)}}
+
+  .demo-stat{border-radius:12px;padding:16px;text-align:right}
+  .demo-stat.purple{background:#f3e8ff}
+  .demo-stat.purple .demo-stat-label{color:#7c3aed}
+  .demo-stat.purple .demo-stat-value{color:#6d28d9}
+  .demo-stat.pink{background:#fce7f3}
+  .demo-stat.pink .demo-stat-label{color:#db2777}
+  .demo-stat.pink .demo-stat-value{color:#be185d}
+  .demo-stat.blue{background:#dbeafe}
+  .demo-stat.blue .demo-stat-label{color:#2563eb}
+  .demo-stat.blue .demo-stat-value{color:#1d4ed8}
+  .demo-stat.prime{background:#fff;border:2px solid #dc2626}
+  .demo-stat.prime .demo-stat-label{color:#dc2626}
+  .demo-stat.prime .demo-stat-value{color:#dc2626}
+
+  .demo-stat-label{font-size:12px;font-weight:700;margin-bottom:8px}
+  .demo-stat-value{font-size:21px;font-weight:800;direction:ltr}
+  .demo-stat-sub{font-size:11px;color:#6b7280;margin-top:4px;direction:ltr}
+
+  .demo-stat2{background:var(--card2);border-radius:12px;padding:16px;text-align:right}
+  .demo-stat2 .demo-stat-label{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px}
+  .demo-stat2.red .demo-stat-value{color:#dc2626}
+  .demo-stat2.green .demo-stat-value{color:#16a34a}
+  .demo-stat2 .demo-stat-value{font-size:21px;font-weight:800;direction:ltr}
+  .demo-stat2 .demo-stat-sub{font-size:11px;color:var(--muted);margin-top:4px;direction:ltr}
+
+  .demo-note{color:var(--muted);font-size:13px;margin-top:16px;line-height:1.7;text-align:center}
 </style>
 </head>
 <body>
@@ -312,23 +338,69 @@
 
   <!-- DEMO TAB -->
   <div class="panel" id="panel-demo">
-    <div class="card" style="text-align:center">
-      <h2>כך זה נראה באפליקציה</h2>
-      <div class="demo-visual">
-        <svg viewBox="0 0 200 130" class="chart-svg" preserveAspectRatio="xMidYMid meet">
-          <line x1="8" y1="46" x2="192" y2="46" class="target-line"/>
-          <text x="192" y="38" class="target-label" text-anchor="end">60%</text>
-          <rect class="bar bar1" x="18" y="70" width="24" height="52"/>
-          <rect class="bar bar2" x="55" y="55" width="24" height="67"/>
-          <rect class="bar bar3" x="92" y="38" width="24" height="84"/>
-          <rect class="bar bar4" x="129" y="58" width="24" height="64"/>
-          <rect class="bar bar5" x="166" y="34" width="24" height="88"/>
-        </svg>
-        <div class="demo-caption">Prime Cost <span>&lt; 60%</span></div>
+    <div class="card">
+      <h2 style="margin-bottom:0"></h2>
+      <div class="demo-header">
+        <span>📸</span>
+        <span>August 2026 (28 ימים) — מכירות עד כה</span>
+        <span class="live-dot" title="חי"></span>
       </div>
-      <p class="demo-note">
-        כך אפליקציית Smart Plate Basic עוקבת בזמן אמת אחרי הפריים קוסט (מזון + שכר) מול קו היעד החודשי שלכם — בדיוק כמו שראינו כאן בפגישה.
-      </p>
+
+      <div class="demo-prediction">
+        <div class="demo-pred-value" id="demo-pred-value"></div>
+        <div class="demo-pred-text">
+          <div>תחזית מכירות לסוף החודש</div>
+          <div class="demo-pred-sub">על בסיס 28 ימים שנסגרו, משוקלל לפי ימי השבוע · נותרו 3 ימים</div>
+          <span class="demo-pill">חודש עם סוף שבוע</span>
+        </div>
+      </div>
+
+      <div class="demo-grid">
+        <div class="demo-stat purple">
+          <div class="demo-stat-label">מכירות וולט</div>
+          <div class="demo-stat-value" id="demo-wolt-sales"></div>
+          <div class="demo-stat-sub"><span id="demo-wolt-pct"></span> מהמחזור</div>
+        </div>
+        <div class="demo-stat pink">
+          <div class="demo-stat-label">מכירות מסעדה</div>
+          <div class="demo-stat-value" id="demo-restaurant-sales"></div>
+          <div class="demo-stat-sub"><span id="demo-restaurant-pct"></span> מהמחזור</div>
+        </div>
+        <div class="demo-stat blue">
+          <div class="demo-stat-label">מחזור כולל מע"מ</div>
+          <div class="demo-stat-value" id="demo-total-vat"></div>
+          <div class="demo-stat-sub">נטו: <span id="demo-total-net"></span></div>
+        </div>
+        <div class="demo-stat prime">
+          <div class="demo-stat-label">פריים קוסט 📊</div>
+          <div class="demo-stat-value" id="demo-prime-pct"></div>
+        </div>
+      </div>
+
+      <div class="demo-grid" style="margin-top:12px">
+        <div class="demo-stat2 red">
+          <div class="demo-stat-label">עלות מזון 🍅</div>
+          <div class="demo-stat-value" id="demo-food-pct"></div>
+          <div class="demo-stat-sub" id="demo-food-amt"></div>
+        </div>
+        <div class="demo-stat2 red">
+          <div class="demo-stat-label">כוח אדם 👷</div>
+          <div class="demo-stat-value" id="demo-labor-pct"></div>
+          <div class="demo-stat-sub" id="demo-labor-amt"></div>
+        </div>
+        <div class="demo-stat2 green">
+          <div class="demo-stat-label">עמלת וולט 🛵</div>
+          <div class="demo-stat-value" id="demo-woltcomm-pct"></div>
+          <div class="demo-stat-sub" id="demo-woltcomm-amt"></div>
+        </div>
+        <div class="demo-stat2 green">
+          <div class="demo-stat-label">שכירות 🏢</div>
+          <div class="demo-stat-value" id="demo-rent-pct"></div>
+          <div class="demo-stat-sub" id="demo-rent-amt"></div>
+        </div>
+      </div>
+
+      <p class="demo-note">כך אפליקציית Smart Plate Basic מציגה בזמן אמת את המכירות, העלויות והפריים קוסט שלכם — מתעדכן בכל יום, יום אחר יום.</p>
     </div>
   </div>
 
@@ -340,6 +412,86 @@ function switchTab(tab){
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active', b.dataset.tab===tab));
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.getElementById('panel-'+tab).classList.add('active');
+  if(tab === 'demo') startDemoAnimation();
+}
+
+/* ---- DEMO TAB: animated replica of the real live dashboard ---- */
+const DEMO_DATA = {
+  pred: 765578,
+  woltSales: 88989, woltPct: 12.7,
+  restSales: 609202, restPct: 87.3,
+  totalVat: 698191, totalNet: 591687,
+  primePct: 61.8,
+  foodPct: 30.6, foodAmt: 181237,
+  laborPct: 31.2, laborAmt: 184332,
+  woltCommPct: 3.1, woltCommAmt: 18099,
+  rentPct: 2.1, rentAmt: 16000
+};
+
+function fmtILS(n){ return Math.round(n).toLocaleString('en-US') + '₪'; }
+function fmtPct1(n){ return n.toFixed(1) + '%'; }
+
+function animateValue(el, from, to, duration, formatFn){
+  if(!el) return;
+  const start = performance.now();
+  function tick(now){
+    const t = Math.min(1, (now - start) / duration);
+    const eased = 1 - Math.pow(1 - t, 3);
+    const val = from + (to - from) * eased;
+    el.textContent = formatFn(val);
+    if(t < 1) requestAnimationFrame(tick);
+    else el.textContent = formatFn(to);
+  }
+  requestAnimationFrame(tick);
+}
+
+function jitterOne(id, base, formatFn, amp){
+  const el = document.getElementById(id);
+  if(!el) return;
+  const delta = (Math.random() * 2 - 1) * base * amp;
+  el.textContent = formatFn(base + delta);
+}
+
+let demoStarted = false;
+function startDemoAnimation(){
+  if(demoStarted) return;
+  demoStarted = true;
+  const D = DEMO_DATA;
+  const dur = 1400;
+
+  animateValue(document.getElementById('demo-pred-value'), 0, D.pred, dur, fmtILS);
+  animateValue(document.getElementById('demo-wolt-sales'), 0, D.woltSales, dur, fmtILS);
+  animateValue(document.getElementById('demo-wolt-pct'), 0, D.woltPct, dur, fmtPct1);
+  animateValue(document.getElementById('demo-restaurant-sales'), 0, D.restSales, dur, fmtILS);
+  animateValue(document.getElementById('demo-restaurant-pct'), 0, D.restPct, dur, fmtPct1);
+  animateValue(document.getElementById('demo-total-vat'), 0, D.totalVat, dur, fmtILS);
+  animateValue(document.getElementById('demo-total-net'), 0, D.totalNet, dur, fmtILS);
+  animateValue(document.getElementById('demo-prime-pct'), 0, D.primePct, dur, fmtPct1);
+  animateValue(document.getElementById('demo-food-pct'), 0, D.foodPct, dur, fmtPct1);
+  animateValue(document.getElementById('demo-food-amt'), 0, D.foodAmt, dur, fmtILS);
+  animateValue(document.getElementById('demo-labor-pct'), 0, D.laborPct, dur, fmtPct1);
+  animateValue(document.getElementById('demo-labor-amt'), 0, D.laborAmt, dur, fmtILS);
+  animateValue(document.getElementById('demo-woltcomm-pct'), 0, D.woltCommPct, dur, fmtPct1);
+  animateValue(document.getElementById('demo-woltcomm-amt'), 0, D.woltCommAmt, dur, fmtILS);
+  animateValue(document.getElementById('demo-rent-pct'), 0, D.rentPct, dur, fmtPct1);
+  animateValue(document.getElementById('demo-rent-amt'), 0, D.rentAmt, dur, fmtILS);
+
+  setTimeout(startLiveJitter, dur + 300);
+}
+
+function startLiveJitter(){
+  const D = DEMO_DATA;
+  setInterval(() => {
+    jitterOne('demo-wolt-sales', D.woltSales, fmtILS, 0.004);
+    jitterOne('demo-restaurant-sales', D.restSales, fmtILS, 0.002);
+    jitterOne('demo-total-vat', D.totalVat, fmtILS, 0.002);
+    jitterOne('demo-total-net', D.totalNet, fmtILS, 0.002);
+    jitterOne('demo-prime-pct', D.primePct, fmtPct1, 0.01);
+    jitterOne('demo-food-pct', D.foodPct, fmtPct1, 0.012);
+    jitterOne('demo-labor-pct', D.laborPct, fmtPct1, 0.012);
+    jitterOne('demo-woltcomm-pct', D.woltCommPct, fmtPct1, 0.02);
+    jitterOne('demo-rent-pct', D.rentPct, fmtPct1, 0.02);
+  }, 2600);
 }
 
 function fmt(n){

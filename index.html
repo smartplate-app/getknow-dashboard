@@ -168,6 +168,15 @@
   .red{color:var(--red)}
 
   footer{text-align:center;margin-top:30px;color:var(--muted);font-size:12px}
+
+  input[type=number]::-webkit-outer-spin-button,
+  input[type=number]::-webkit-inner-spin-button{
+    -webkit-appearance:none;
+    margin:0;
+  }
+  input[type=number]{
+    -moz-appearance:textfield;
+  }
 </style>
 </head>
 <body>
@@ -190,11 +199,11 @@
       <h2>Sales</h2>
       <div class="sales-row">
         <div class="label">Sales (incl. VAT)</div>
-        <input type="number" id="current-sales-vat" placeholder="0" oninput="calc('current')">
+        <input type="number" id="current-sales-vat"  oninput="calc('current')">
       </div>
       <div class="sales-row">
         <div class="label">Sales (excl. VAT)<br><small style="color:var(--muted);font-weight:400">auto = incl. VAT / 1.18, or type your own</small></div>
-        <input type="number" id="current-sales-net" placeholder="0" oninput="calc('current', true)">
+        <input type="number" id="current-sales-net"  oninput="calc('current')">
       </div>
     </div>
 
@@ -202,28 +211,28 @@
       <h2>Costs</h2>
       <div class="row">
         <div class="label">Food Cost</div>
-        <input type="number" id="current-food" placeholder="0" oninput="calc('current')">
-        <div class="pct" id="current-food-pct">0%</div>
+        <input type="number" id="current-food"  oninput="calc('current')">
+        <div class="pct" id="current-food-pct"></div>
       </div>
       <div class="row">
         <div class="label">Labor Cost</div>
-        <input type="number" id="current-labor" placeholder="0" oninput="calc('current')">
-        <div class="pct" id="current-labor-pct">0%</div>
+        <input type="number" id="current-labor"  oninput="calc('current')">
+        <div class="pct" id="current-labor-pct"></div>
       </div>
       <div class="row">
         <div class="label">Rent</div>
-        <input type="number" id="current-rent" placeholder="0" oninput="calc('current')">
-        <div class="pct" id="current-rent-pct">0%</div>
+        <input type="number" id="current-rent"  oninput="calc('current')">
+        <div class="pct" id="current-rent-pct"></div>
       </div>
     </div>
 
     <div class="card">
       <h2>Summary</h2>
       <div class="summary">
-        <div class="stat"><div class="val" id="current-sales-net-display">₪0</div><div class="lbl">Net Sales</div></div>
-        <div class="stat"><div class="val" id="current-total-cost-pct">0%</div><div class="lbl">Food + Labor + Rent</div></div>
+        <div class="stat"><div class="val" id="current-sales-net-display"></div><div class="lbl">Net Sales</div></div>
+        <div class="stat"><div class="val" id="current-total-cost-pct"></div><div class="lbl">Food + Labor + Rent</div></div>
         <div class="prime-box">
-          <div class="val" id="current-prime-pct">0%</div>
+          <div class="val" id="current-prime-pct"></div>
           <div class="lbl">Prime Cost (Food + Labor)</div>
           <div class="target">Target: ≤ 60%</div>
         </div>
@@ -237,11 +246,11 @@
       <h2>Sales</h2>
       <div class="sales-row">
         <div class="label">Sales (incl. VAT)</div>
-        <input type="number" id="goal-sales-vat" placeholder="0" oninput="calc('goal')">
+        <input type="number" id="goal-sales-vat"  oninput="calc('goal')">
       </div>
       <div class="sales-row">
         <div class="label">Sales (excl. VAT)<br><small style="color:var(--muted);font-weight:400">auto = incl. VAT / 1.18, or type your own</small></div>
-        <input type="number" id="goal-sales-net" placeholder="0" oninput="calc('goal', true)">
+        <input type="number" id="goal-sales-net"  oninput="calc('goal')">
       </div>
     </div>
 
@@ -249,28 +258,28 @@
       <h2>Costs</h2>
       <div class="row">
         <div class="label">Food Cost</div>
-        <input type="number" id="goal-food" placeholder="0" oninput="calc('goal')">
-        <div class="pct" id="goal-food-pct">0%</div>
+        <input type="number" id="goal-food"  oninput="calc('goal')">
+        <div class="pct" id="goal-food-pct"></div>
       </div>
       <div class="row">
         <div class="label">Labor Cost</div>
-        <input type="number" id="goal-labor" placeholder="0" oninput="calc('goal')">
-        <div class="pct" id="goal-labor-pct">0%</div>
+        <input type="number" id="goal-labor"  oninput="calc('goal')">
+        <div class="pct" id="goal-labor-pct"></div>
       </div>
       <div class="row">
         <div class="label">Rent</div>
-        <input type="number" id="goal-rent" placeholder="0" oninput="calc('goal')">
-        <div class="pct" id="goal-rent-pct">0%</div>
+        <input type="number" id="goal-rent"  oninput="calc('goal')">
+        <div class="pct" id="goal-rent-pct"></div>
       </div>
     </div>
 
     <div class="card">
       <h2>Summary</h2>
       <div class="summary">
-        <div class="stat"><div class="val" id="goal-sales-net-display">₪0</div><div class="lbl">Net Sales</div></div>
-        <div class="stat"><div class="val" id="goal-total-cost-pct">0%</div><div class="lbl">Food + Labor + Rent</div></div>
+        <div class="stat"><div class="val" id="goal-sales-net-display"></div><div class="lbl">Net Sales</div></div>
+        <div class="stat"><div class="val" id="goal-total-cost-pct"></div><div class="lbl">Food + Labor + Rent</div></div>
         <div class="prime-box">
-          <div class="val" id="goal-prime-pct">0%</div>
+          <div class="val" id="goal-prime-pct"></div>
           <div class="lbl">Prime Cost (Food + Labor)</div>
           <div class="target">Target: ≤ 60%</div>
         </div>
@@ -289,42 +298,55 @@ function switchTab(tab){
 }
 
 function fmt(n){
-  if(!isFinite(n)) return '₪0';
   return '₪' + Math.round(n).toLocaleString('en-US');
 }
 
-function calc(prefix, netTyped){
-  const salesVat = parseFloat(document.getElementById(prefix+'-sales-vat').value) || 0;
+function numOrNull(el){
+  return el.value === '' ? null : (parseFloat(el.value) || 0);
+}
+
+function pctStr(v){
+  return v === null ? '' : v.toFixed(1) + '%';
+}
+
+function calc(prefix){
+  const vatInput = document.getElementById(prefix+'-sales-vat');
   const netInput = document.getElementById(prefix+'-sales-net');
-  let salesNet = parseFloat(netInput.value) || 0;
+  const foodInput = document.getElementById(prefix+'-food');
+  const laborInput = document.getElementById(prefix+'-labor');
+  const rentInput = document.getElementById(prefix+'-rent');
 
-  // auto-fill net sales from gross if user hasn't typed their own net value
-  if(!netTyped && !netInput.value && salesVat > 0){
-    salesNet = salesVat / 1.18;
+  const salesVat = parseFloat(vatInput.value) || 0;
+
+  // auto-fill Net Sales box visibly from Gross, but never overwrite a value the user typed themselves
+  if(netInput.value === '' && salesVat > 0){
+    netInput.value = (salesVat / 1.18).toFixed(2);
   }
-  if(salesNet === 0 && salesVat > 0){
-    salesNet = salesVat / 1.18;
-  }
 
-  const food = parseFloat(document.getElementById(prefix+'-food').value) || 0;
-  const labor = parseFloat(document.getElementById(prefix+'-labor').value) || 0;
-  const rent = parseFloat(document.getElementById(prefix+'-rent').value) || 0;
+  const salesNet = parseFloat(netInput.value) || 0;
 
-  const foodPct = salesNet > 0 ? (food/salesNet*100) : 0;
-  const laborPct = salesNet > 0 ? (labor/salesNet*100) : 0;
-  const rentPct = salesNet > 0 ? (rent/salesNet*100) : 0;
-  const primePct = foodPct + laborPct;
-  const totalPct = foodPct + laborPct + rentPct;
+  const foodVal = numOrNull(foodInput);
+  const laborVal = numOrNull(laborInput);
+  const rentVal = numOrNull(rentInput);
 
-  document.getElementById(prefix+'-food-pct').textContent = foodPct.toFixed(1)+'%';
-  document.getElementById(prefix+'-labor-pct').textContent = laborPct.toFixed(1)+'%';
-  document.getElementById(prefix+'-rent-pct').textContent = rentPct.toFixed(1)+'%';
-  document.getElementById(prefix+'-sales-net-display').textContent = fmt(salesNet);
-  document.getElementById(prefix+'-total-cost-pct').textContent = totalPct.toFixed(1)+'%';
+  const foodPct = (salesNet > 0 && foodVal !== null) ? (foodVal/salesNet*100) : null;
+  const laborPct = (salesNet > 0 && laborVal !== null) ? (laborVal/salesNet*100) : null;
+  const rentPct = (salesNet > 0 && rentVal !== null) ? (rentVal/salesNet*100) : null;
+
+  document.getElementById(prefix+'-food-pct').textContent = pctStr(foodPct);
+  document.getElementById(prefix+'-labor-pct').textContent = pctStr(laborPct);
+  document.getElementById(prefix+'-rent-pct').textContent = pctStr(rentPct);
+
+  document.getElementById(prefix+'-sales-net-display').textContent = salesNet > 0 ? fmt(salesNet) : '';
+
+  const primePct = (foodPct === null && laborPct === null) ? null : ((foodPct||0) + (laborPct||0));
+  const totalPct = (foodPct === null && laborPct === null && rentPct === null) ? null : ((foodPct||0) + (laborPct||0) + (rentPct||0));
+
+  document.getElementById(prefix+'-total-cost-pct').textContent = pctStr(totalPct);
 
   const primeEl = document.getElementById(prefix+'-prime-pct');
-  primeEl.textContent = primePct.toFixed(1)+'%';
-  primeEl.className = 'val ' + (primePct<=60?'green':primePct<=65?'orange':'red');
+  primeEl.textContent = pctStr(primePct);
+  primeEl.className = 'val' + (primePct === null ? '' : (primePct<=60 ? ' green' : primePct<=65 ? ' orange' : ' red'));
 }
 
 calc('current');

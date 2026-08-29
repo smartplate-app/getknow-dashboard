@@ -49,16 +49,16 @@
     text-align:right;
   }
 
-  .tabs{display:flex;justify-content:center;gap:10px;margin-bottom:24px}
+  .tabs{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-bottom:24px}
   .tab-btn{
     background:var(--card);
     border:1px solid var(--border);
     color:var(--muted);
-    padding:10px 28px;
+    padding:10px 20px;
     border-radius:10px;
-    font-size:14px;
+    font-size:13px;
     font-weight:700;
-    letter-spacing:.5px;
+    letter-spacing:.3px;
     cursor:pointer;
     transition:all .15s;
   }
@@ -184,6 +184,21 @@
   input[type=number]{
     -moz-appearance:textfield;
   }
+
+  /* --- live demo visual (same animation used on the Smart Plate Basic site) --- */
+  .demo-visual{position:relative;width:100%;height:160px;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:6px 0 4px}
+  .chart-svg{width:100%;max-width:320px;height:120px;overflow:visible;margin:0 auto;display:block}
+  .bar{fill:var(--teal);transform-box:fill-box;transform-origin:bottom;animation:barPulse 2.2s ease-in-out infinite}
+  .bar2{animation-delay:.18s}
+  .bar3{animation-delay:.36s}
+  .bar4{animation-delay:.54s}
+  .bar5{animation-delay:.72s}
+  @keyframes barPulse{0%,100%{transform:scaleY(.65)}50%{transform:scaleY(1)}}
+  .target-line{stroke:var(--red);stroke-width:2;stroke-dasharray:6 5;opacity:.85}
+  .target-label{fill:var(--red);font-size:13px;font-weight:800}
+  .demo-caption{font-size:13px;color:var(--muted);font-weight:800;letter-spacing:.3px;margin-top:8px;direction:ltr}
+  .demo-caption span{color:var(--teal)}
+  .demo-note{color:var(--muted);font-size:13px;margin-top:16px;line-height:1.7}
 </style>
 </head>
 <body>
@@ -198,6 +213,7 @@
   <div class="tabs">
     <button class="tab-btn active" data-tab="current" onclick="switchTab('current')">מצב נוכחי</button>
     <button class="tab-btn" data-tab="goal" onclick="switchTab('goal')">מטרה</button>
+    <button class="tab-btn" data-tab="demo" onclick="switchTab('demo')">דמו</button>
   </div>
 
   <!-- CURRENT TAB -->
@@ -206,11 +222,11 @@
       <h2>מכירות</h2>
       <div class="sales-row">
         <div class="label">מכירות (כולל מע"מ)</div>
-        <input type="number" id="current-sales-vat" oninput="calc('current')">
+        <input type="number" id="current-sales-vat" oninput="onCurrentVatInput()">
       </div>
       <div class="sales-row">
         <div class="label">מכירות (לא כולל מע"מ)<br><small style="color:var(--muted);font-weight:400">אוטומטי = כולל מע"מ ÷ 1.18, או הזן ידנית</small></div>
-        <input type="number" id="current-sales-net" oninput="onNetInput('current')">
+        <input type="number" id="current-sales-net" oninput="onCurrentNetInput()">
       </div>
     </div>
 
@@ -252,8 +268,8 @@
     <div class="card">
       <h2>מכירות</h2>
       <div class="sales-row">
-        <div class="label">מכירות (כולל מע"מ)</div>
-        <input type="number" id="goal-sales-vat" oninput="calc('goal')">
+        <div class="label">מכירות (כולל מע"מ)<br><small style="color:var(--muted);font-weight:400">מועתק אוטומטית מ"מצב נוכחי", ניתן לשנות</small></div>
+        <input type="number" id="goal-sales-vat" oninput="onGoalVatInput()">
       </div>
       <div class="sales-row">
         <div class="label">מכירות (לא כולל מע"מ)<br><small style="color:var(--muted);font-weight:400">אוטומטי = כולל מע"מ ÷ 1.18, או הזן ידנית</small></div>
@@ -262,15 +278,15 @@
     </div>
 
     <div class="card">
-      <h2>עלויות</h2>
+      <h2>עלויות (יעד באחוזים)</h2>
       <div class="row">
-        <div class="label">עלות מזון</div>
-        <input type="number" id="goal-food" oninput="calc('goal')">
+        <div class="label">עלות מזון %</div>
+        <input type="number" id="goal-food" placeholder="%" oninput="calc('goal')">
         <div class="pct" id="goal-food-pct"></div>
       </div>
       <div class="row">
-        <div class="label">עלות שכר</div>
-        <input type="number" id="goal-labor" oninput="calc('goal')">
+        <div class="label">עלות שכר %</div>
+        <input type="number" id="goal-labor" placeholder="%" oninput="calc('goal')">
         <div class="pct" id="goal-labor-pct"></div>
       </div>
       <div class="row">
@@ -291,6 +307,28 @@
           <div class="target">יעד: עד 60%</div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- DEMO TAB -->
+  <div class="panel" id="panel-demo">
+    <div class="card" style="text-align:center">
+      <h2>כך זה נראה באפליקציה</h2>
+      <div class="demo-visual">
+        <svg viewBox="0 0 200 130" class="chart-svg" preserveAspectRatio="xMidYMid meet">
+          <line x1="8" y1="46" x2="192" y2="46" class="target-line"/>
+          <text x="192" y="38" class="target-label" text-anchor="end">60%</text>
+          <rect class="bar bar1" x="18" y="70" width="24" height="52"/>
+          <rect class="bar bar2" x="55" y="55" width="24" height="67"/>
+          <rect class="bar bar3" x="92" y="38" width="24" height="84"/>
+          <rect class="bar bar4" x="129" y="58" width="24" height="64"/>
+          <rect class="bar bar5" x="166" y="34" width="24" height="88"/>
+        </svg>
+        <div class="demo-caption">Prime Cost <span>&lt; 60%</span></div>
+      </div>
+      <p class="demo-note">
+        כך אפליקציית Smart Plate Basic עוקבת בזמן אמת אחרי הפריים קוסט (מזון + שכר) מול קו היעד החודשי שלכם — בדיוק כמו שראינו כאן בפגישה.
+      </p>
     </div>
   </div>
 
@@ -316,14 +354,46 @@ function pctStr(v){
   return v === null ? '' : v.toFixed(1) + '%';
 }
 
-// called when the user types directly into the Net Sales box — marks it as a manual override
+// user typed directly into a Net Sales box -> mark manual override
 function onNetInput(prefix){
   const netInput = document.getElementById(prefix+'-sales-net');
   netInput.dataset.manual = netInput.value === '' ? 'false' : 'true';
   calc(prefix);
 }
 
-function calc(prefix){
+// user typed directly into Current's Gross Sales box
+function onCurrentVatInput(){
+  calc('current');
+  mirrorToGoal();
+}
+
+// user typed directly into Current's Net Sales box
+function onCurrentNetInput(){
+  onNetInput('current');
+  mirrorToGoal();
+}
+
+// user typed directly into Goal's Gross Sales box -> mark manual override (stop mirroring)
+function onGoalVatInput(){
+  const el = document.getElementById('goal-sales-vat');
+  el.dataset.manual = el.value === '' ? 'false' : 'true';
+  calc('goal');
+}
+
+// copy Current's sales into Goal, unless the user already overrode Goal's sales themselves
+function mirrorToGoal(){
+  const gVat = document.getElementById('goal-sales-vat');
+  const gNet = document.getElementById('goal-sales-net');
+  if(gVat.dataset.manual !== 'true'){
+    gVat.value = document.getElementById('current-sales-vat').value;
+  }
+  if(gNet.dataset.manual !== 'true'){
+    gNet.value = document.getElementById('current-sales-net').value;
+  }
+  calc('goal', true);
+}
+
+function calc(prefix, skipNetDerive){
   const vatInput = document.getElementById(prefix+'-sales-vat');
   const netInput = document.getElementById(prefix+'-sales-net');
   const foodInput = document.getElementById(prefix+'-food');
@@ -331,26 +401,43 @@ function calc(prefix){
   const rentInput = document.getElementById(prefix+'-rent');
 
   const salesVat = parseFloat(vatInput.value) || 0;
-  const manual = netInput.dataset.manual === 'true';
+  const netManual = netInput.dataset.manual === 'true';
 
   // keep auto-filling live on every keystroke of the VAT field, unless the user manually typed their own Net value
-  if(!manual){
+  if(!netManual && !skipNetDerive){
     netInput.value = salesVat > 0 ? (salesVat / 1.18).toFixed(2) : '';
   }
 
   const salesNet = parseFloat(netInput.value) || 0;
 
-  const foodVal = numOrNull(foodInput);
-  const laborVal = numOrNull(laborInput);
   const rentVal = numOrNull(rentInput);
-
-  const foodPct = (salesNet > 0 && foodVal !== null) ? (foodVal/salesNet*100) : null;
-  const laborPct = (salesNet > 0 && laborVal !== null) ? (laborVal/salesNet*100) : null;
   const rentPct = (salesNet > 0 && rentVal !== null) ? (rentVal/salesNet*100) : null;
-
-  document.getElementById(prefix+'-food-pct').textContent = pctStr(foodPct);
-  document.getElementById(prefix+'-labor-pct').textContent = pctStr(laborPct);
   document.getElementById(prefix+'-rent-pct').textContent = pctStr(rentPct);
+
+  let foodPct, laborPct;
+
+  if(prefix === 'goal'){
+    // Goal tab: Food/Labor inputs hold the TARGET PERCENTAGE directly; show the resulting ₪ amount
+    const foodPctVal = numOrNull(foodInput);
+    const laborPctVal = numOrNull(laborInput);
+    foodPct = foodPctVal;
+    laborPct = laborPctVal;
+
+    const foodAmount = (salesNet > 0 && foodPctVal !== null) ? (salesNet * foodPctVal / 100) : null;
+    const laborAmount = (salesNet > 0 && laborPctVal !== null) ? (salesNet * laborPctVal / 100) : null;
+
+    document.getElementById('goal-food-pct').textContent = foodAmount === null ? '' : fmt(foodAmount);
+    document.getElementById('goal-labor-pct').textContent = laborAmount === null ? '' : fmt(laborAmount);
+  } else {
+    // Current tab: Food/Labor inputs hold the ₪ amount; show the resulting percentage
+    const foodVal = numOrNull(foodInput);
+    const laborVal = numOrNull(laborInput);
+    foodPct = (salesNet > 0 && foodVal !== null) ? (foodVal/salesNet*100) : null;
+    laborPct = (salesNet > 0 && laborVal !== null) ? (laborVal/salesNet*100) : null;
+
+    document.getElementById('current-food-pct').textContent = pctStr(foodPct);
+    document.getElementById('current-labor-pct').textContent = pctStr(laborPct);
+  }
 
   document.getElementById(prefix+'-sales-net-display').textContent = salesNet > 0 ? fmt(salesNet) : '';
 
@@ -365,7 +452,7 @@ function calc(prefix){
 }
 
 calc('current');
-calc('goal');
+mirrorToGoal();
 </script>
 </body>
 </html>

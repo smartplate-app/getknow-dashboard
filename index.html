@@ -279,7 +279,6 @@
       <h2>סיכום</h2>
       <div class="summary">
         <div class="stat" style="grid-column:1 / -1"><div class="val" id="current-sales-net-display"></div><div class="lbl">מכירות נטו</div></div>
-        <div class="stat" style="grid-column:1 / -1"><div class="val" id="current-profit-display"></div><div class="lbl">רווח משוער (אומדן)</div></div>
         <div class="prime-box">
           <div class="val" id="current-prime-pct"></div>
           <div class="lbl">פריים קוסט (מזון + שכר)</div>
@@ -326,7 +325,6 @@
       <h2>סיכום</h2>
       <div class="summary">
         <div class="stat" style="grid-column:1 / -1"><div class="val" id="goal-sales-net-display"></div><div class="lbl">מכירות נטו</div></div>
-        <div class="stat" style="grid-column:1 / -1"><div class="val" id="goal-profit-display"></div><div class="lbl">רווח (יעד)</div></div>
         <div class="prime-box">
           <div class="val" id="goal-prime-pct"></div>
           <div class="lbl">פריים קוסט (מזון + שכר)</div>
@@ -334,8 +332,6 @@
         </div>
       </div>
     </div>
-
-
   </div>
 
   <!-- DEMO TAB -->
@@ -407,10 +403,12 @@
   </div>
 
   <div class="card" style="text-align:center">
-    <h2>שליחת סיכום למייל</h2>
-    <p style="color:var(--muted);font-size:13px;margin:0 0 14px;line-height:1.6">שולח את מצב נוכחי (אומדן) ומטרה (יעד) — כולל הרווח, יעד הרווח והבונוס — ישירות למייל.</p>
-    <button id="emailBtn" onclick="sendSummaryEmail()" style="background:var(--teal);color:#fff;border:none;padding:12px 30px;border-radius:10px;font-size:14px;font-weight:800;cursor:pointer">📧 שלח לי את הסיכום במייל</button>
-    <div id="emailStatus" style="margin-top:10px;font-size:13px;color:var(--muted)"></div>
+    <h2>שמירת הפגישה</h2>
+    <p style="color:var(--muted);font-size:13px;margin:0 0 14px;line-height:1.6">שומר את מצב נוכחי ומטרה עבור לקוח מסוים, כדי שתוכל לחזור אליו בהמשך.</p>
+    <input type="text" id="save-client-name" placeholder="שם הלקוח / המסעדה" style="background:var(--card2);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:8px;font-size:14px;width:100%;max-width:320px;text-align:right;direction:rtl;margin-bottom:12px">
+    <br>
+    <button id="saveBtn" onclick="saveClientData()" style="background:var(--teal);color:#fff;border:none;padding:12px 30px;border-radius:10px;font-size:14px;font-weight:800;cursor:pointer">💾 שמור</button>
+    <div id="saveStatus" style="margin-top:10px;font-size:13px;color:var(--muted)"></div>
   </div>
 
   <footer>Smart Plate יועצים למסעדות — ניתוח פריים קוסט לפני תחילת עבודה משותפת</footer>
@@ -578,14 +576,13 @@ function calc(prefix, skipNetDerive){
   }
 
   document.getElementById(prefix+'-sales-net-display').textContent = r.salesNet > 0 ? fmt(r.salesNet) : '';
-  document.getElementById(prefix+'-profit-display').textContent = r.profit === null ? '' : fmt(r.profit);
 
   const primeEl = document.getElementById(prefix+'-prime-pct');
   primeEl.textContent = pctStr(r.primePct);
   primeEl.className = 'val' + (r.primePct === null ? '' : (r.primePct<=60 ? ' green' : r.primePct<=65 ? ' orange' : ' red'));
 }
 
-// pure calculation, shared by calc() (DOM updates) and gatherSummary() (email payload)
+// pure calculation, shared by calc() (DOM updates) and gatherForSave() (save payload)
 function computeAll(prefix){
   const vatInput = document.getElementById(prefix+'-sales-vat');
   const netInput = document.getElementById(prefix+'-sales-net');
@@ -616,52 +613,52 @@ function computeAll(prefix){
   }
 
   const primePct = (foodPct === null && laborPct === null) ? null : ((foodPct||0) + (laborPct||0));
-  const profit = salesNet > 0 ? (salesNet - (foodAmt||0) - (laborAmt||0) - (rentVal||0)) : null;
 
-  return { salesVat, salesNet, foodAmt, laborAmt, rentVal, foodPct, laborPct, rentPct, primePct, profit };
+  return { salesVat, salesNet, foodAmt, laborAmt, rentVal, foodPct, laborPct, rentPct, primePct };
 }
 
-function gatherSummary(){
+function gatherForSave(clientName){
   const c = computeAll('current');
   const g = computeAll('goal');
   return {
-    current: {
-      sales_vat: c.salesVat, sales_net: c.salesNet,
-      food_amt: c.foodAmt, food_pct: c.foodPct,
-      labor_amt: c.laborAmt, labor_pct: c.laborPct,
-      rent_amt: c.rentVal, rent_pct: c.rentPct,
-      prime_pct: c.primePct, profit: c.profit
-    },
-    goal: {
-      sales_vat: g.salesVat, sales_net: g.salesNet,
-      food_amt: g.foodAmt, food_pct: g.foodPct,
-      labor_amt: g.laborAmt, labor_pct: g.laborPct,
-      rent_amt: g.rentVal, rent_pct: g.rentPct,
-      prime_pct: g.primePct, profit: g.profit
-    }
+    client_name: clientName,
+    current_sales_vat: c.salesVat, current_sales_net: c.salesNet,
+    current_food: c.foodAmt, current_labor: c.laborAmt, current_rent: c.rentVal,
+    current_prime_pct: c.primePct,
+    goal_sales_vat: g.salesVat, goal_sales_net: g.salesNet,
+    goal_food_pct: g.foodPct, goal_labor_pct: g.laborPct, goal_rent: g.rentVal,
+    goal_prime_pct: g.primePct
   };
 }
 
-function sendSummaryEmail(){
-  const btn = document.getElementById('emailBtn');
-  const status = document.getElementById('emailStatus');
-  const payload = gatherSummary();
+function saveClientData(){
+  const btn = document.getElementById('saveBtn');
+  const status = document.getElementById('saveStatus');
+  const nameInput = document.getElementById('save-client-name');
+  const clientName = nameInput.value.trim();
 
+  if(!clientName){
+    status.textContent = '⚠️ יש להזין שם לקוח לפני השמירה';
+    nameInput.focus();
+    return;
+  }
+
+  const payload = gatherForSave(clientName);
   btn.disabled = true;
-  status.textContent = 'שולח...';
+  status.textContent = 'שומר...';
 
-  fetch('https://base44.app/api/apps/69b697029d0cd0fecb49189b/functions/sendGetToKnowEmail', {
+  fetch('https://base44.app/api/apps/69b697029d0cd0fecb49189b/functions/saveGetKnowMeeting', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
   })
     .then(r => r.json())
     .then(data => {
-      status.textContent = data.success ? '✅ נשלח בהצלחה למייל' : '❌ שגיאה בשליחה, נסה שוב';
+      status.textContent = data.success ? ('✅ נשמר בהצלחה עבור ' + clientName) : '❌ שגיאה בשמירה, נסה שוב';
       btn.disabled = false;
     })
     .catch(() => {
-      status.textContent = '❌ שגיאה בשליחה, נסה שוב';
+      status.textContent = '❌ שגיאה בשמירה, נסה שוב';
       btn.disabled = false;
     });
 }

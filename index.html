@@ -403,6 +403,17 @@
   </div>
 
   <div class="card" style="text-align:center">
+    <h2>טעינת לקוח שנשמר</h2>
+    <p style="color:var(--muted);font-size:13px;margin:0 0 14px;line-height:1.6">בחר לקוח שנשמר בעבר כדי לטעון את הנתונים שלו מחדש.</p>
+    <select id="saved-select" style="background:var(--card2);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:8px;font-size:14px;width:100%;max-width:320px;text-align:right;direction:rtl;margin-bottom:12px">
+      <option value="">טוען רשימה...</option>
+    </select>
+    <br>
+    <button id="loadBtn" onclick="loadSelectedRecord()" style="background:var(--card2);color:var(--text);border:1px solid var(--border);padding:12px 30px;border-radius:10px;font-size:14px;font-weight:800;cursor:pointer">📂 טען</button>
+    <div id="loadStatus" style="margin-top:10px;font-size:13px;color:var(--muted)"></div>
+  </div>
+
+  <div class="card" style="text-align:center">
     <h2>שמירת הפגישה</h2>
     <p style="color:var(--muted);font-size:13px;margin:0 0 14px;line-height:1.6">שומר את מצב נוכחי ומטרה עבור לקוח מסוים, כדי שתוכל לחזור אליו בהמשך.</p>
     <input type="text" id="save-client-name" placeholder="שם הלקוח / המסעדה" style="background:var(--card2);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:8px;font-size:14px;width:100%;max-width:320px;text-align:right;direction:rtl;margin-bottom:12px">
@@ -663,8 +674,72 @@ function saveClientData(){
     });
 }
 
+let savedRecords = [];
+
+function fmtDate(iso){
+  if(!iso) return '';
+  const d = new Date(iso);
+  return d.toLocaleDateString('he-IL') + ' ' + d.toLocaleTimeString('he-IL', {hour:'2-digit', minute:'2-digit'});
+}
+
+function loadSavedList(){
+  const select = document.getElementById('saved-select');
+  fetch('https://base44.app/api/apps/69b697029d0cd0fecb49189b/functions/saveGetKnowMeeting')
+    .then(r => r.json())
+    .then(data => {
+      if(!data.success || !data.meetings || !data.meetings.length){
+        select.innerHTML = '<option value="">אין רשומות שמורות עדיין</option>';
+        return;
+      }
+      savedRecords = data.meetings;
+      select.innerHTML = savedRecords.map((m, i) =>
+        `<option value="${i}">${m.client_name} — ${fmtDate(m.saved_at || m.created_date)}</option>`
+      ).join('');
+    })
+    .catch(() => {
+      select.innerHTML = '<option value="">שגיאה בטעינת הרשימה</option>';
+    });
+}
+
+function loadSelectedRecord(){
+  const select = document.getElementById('saved-select');
+  const status = document.getElementById('loadStatus');
+  const idx = select.value;
+  if(idx === ''){
+    status.textContent = '⚠️ בחר לקוח מהרשימה';
+    return;
+  }
+  const r = savedRecords[idx];
+  if(!r){
+    status.textContent = '❌ הרשומה לא נמצאה';
+    return;
+  }
+
+  document.getElementById('current-sales-vat').value = r.current_sales_vat ?? '';
+  document.getElementById('current-sales-net').dataset.manual = 'false';
+  document.getElementById('current-food').value = r.current_food ?? '';
+  document.getElementById('current-labor').value = r.current_labor ?? '';
+  document.getElementById('current-rent').value = r.current_rent ?? '';
+  calc('current');
+
+  document.getElementById('goal-sales-vat').value = r.goal_sales_vat ?? '';
+  document.getElementById('goal-sales-vat').dataset.manual = 'true';
+  document.getElementById('goal-sales-net').value = r.goal_sales_net ?? '';
+  document.getElementById('goal-sales-net').dataset.manual = 'true';
+  document.getElementById('goal-food').value = r.goal_food_pct ?? '';
+  document.getElementById('goal-labor').value = r.goal_labor_pct ?? '';
+  document.getElementById('goal-rent').value = r.goal_rent ?? '';
+  calc('goal', true);
+
+  document.getElementById('save-client-name').value = r.client_name || '';
+
+  switchTab('current');
+  status.textContent = '✅ נטען: ' + r.client_name;
+}
+
 calc('current');
 mirrorToGoal();
+loadSavedList();
 </script>
 </body>
 </html>

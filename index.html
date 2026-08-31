@@ -335,19 +335,7 @@
       </div>
     </div>
 
-    <div class="card">
-      <h2>בונוס מנהל מהרווח (יעד) — לא ממכירות</h2>
-      <div class="row">
-        <div class="label">בונוס חודשי למנהל<br><small style="color:var(--muted);font-weight:400">אחוז מהרווח החודשי (לא מהמכירות)</small></div>
-        <input type="number" id="goal-profit-fee-pct" placeholder="%" oninput="calc('goal')">
-        <div class="pct" id="goal-profit-fee-amt"></div>
-      </div>
-      <div class="row">
-        <div class="label">בונוס הצלחה חד-פעמי<br><small style="color:var(--muted);font-weight:400">אחוז חד-פעמי מהרווח (לא מהמכירות)</small></div>
-        <input type="number" id="goal-bonus-fee-pct" placeholder="%" oninput="calc('goal')">
-        <div class="pct" id="goal-bonus-fee-amt"></div>
-      </div>
-    </div>
+
   </div>
 
   <!-- DEMO TAB -->
@@ -584,8 +572,6 @@ function calc(prefix, skipNetDerive){
   if(prefix === 'goal'){
     document.getElementById('goal-food-pct').textContent = r.foodAmt === null ? '' : fmt(r.foodAmt);
     document.getElementById('goal-labor-pct').textContent = r.laborAmt === null ? '' : fmt(r.laborAmt);
-    document.getElementById('goal-profit-fee-amt').textContent = r.profitGoalAmt === null ? '' : fmt(r.profitGoalAmt);
-    document.getElementById('goal-bonus-fee-amt').textContent = r.bonusGoalAmt === null ? '' : fmt(r.bonusGoalAmt);
   } else {
     document.getElementById('current-food-pct').textContent = pctStr(r.foodPct);
     document.getElementById('current-labor-pct').textContent = pctStr(r.laborPct);
@@ -632,17 +618,7 @@ function computeAll(prefix){
   const primePct = (foodPct === null && laborPct === null) ? null : ((foodPct||0) + (laborPct||0));
   const profit = salesNet > 0 ? (salesNet - (foodAmt||0) - (laborAmt||0) - (rentVal||0)) : null;
 
-  let profitGoalPct = null, profitGoalAmt = null, bonusGoalPct = null, bonusGoalAmt = null;
-  if(prefix === 'goal'){
-    const pgInput = document.getElementById('goal-profit-fee-pct');
-    const bgInput = document.getElementById('goal-bonus-fee-pct');
-    profitGoalPct = pgInput ? numOrNull(pgInput) : null;
-    bonusGoalPct = bgInput ? numOrNull(bgInput) : null;
-    profitGoalAmt = (profit !== null && profitGoalPct !== null) ? (profit * profitGoalPct / 100) : null;
-    bonusGoalAmt = (profit !== null && bonusGoalPct !== null) ? (profit * bonusGoalPct / 100) : null;
-  }
-
-  return { salesVat, salesNet, foodAmt, laborAmt, rentVal, foodPct, laborPct, rentPct, primePct, profit, profitGoalPct, profitGoalAmt, bonusGoalPct, bonusGoalAmt };
+  return { salesVat, salesNet, foodAmt, laborAmt, rentVal, foodPct, laborPct, rentPct, primePct, profit };
 }
 
 function gatherSummary(){
@@ -661,9 +637,7 @@ function gatherSummary(){
       food_amt: g.foodAmt, food_pct: g.foodPct,
       labor_amt: g.laborAmt, labor_pct: g.laborPct,
       rent_amt: g.rentVal, rent_pct: g.rentPct,
-      prime_pct: g.primePct, profit: g.profit,
-      profit_goal_pct: g.profitGoalPct, profit_goal_amt: g.profitGoalAmt,
-      bonus_goal_pct: g.bonusGoalPct, bonus_goal_amt: g.bonusGoalAmt
+      prime_pct: g.primePct, profit: g.profit
     }
   };
 }

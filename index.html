@@ -274,6 +274,16 @@
         <input type="number" id="current-rent" oninput="calc('current')">
         <div class="pct" id="current-rent-pct"></div>
       </div>
+      <div class="row">
+        <div class="label">עמלות משלוחים</div>
+        <input type="number" id="current-delivery" oninput="calc('current')">
+        <div class="pct" id="current-delivery-pct"></div>
+      </div>
+      <div class="row">
+        <div class="label">הוצאות שיווק</div>
+        <input type="number" id="current-marketing" oninput="calc('current')">
+        <div class="pct" id="current-marketing-pct"></div>
+      </div>
     </div>
 
     <div class="card">
@@ -319,6 +329,16 @@
         <div class="label">שכר דירה</div>
         <input type="number" id="goal-rent" oninput="calc('goal')">
         <div class="pct" id="goal-rent-pct"></div>
+      </div>
+      <div class="row">
+        <div class="label">עמלות משלוחים</div>
+        <input type="number" id="goal-delivery" oninput="calc('goal')">
+        <div class="pct" id="goal-delivery-pct"></div>
+      </div>
+      <div class="row">
+        <div class="label">הוצאות שיווק</div>
+        <input type="number" id="goal-marketing" oninput="calc('goal')">
+        <div class="pct" id="goal-marketing-pct"></div>
       </div>
     </div>
 
@@ -580,6 +600,8 @@ function calc(prefix, skipNetDerive){
   const r = computeAll(prefix);
 
   document.getElementById(prefix+'-rent-pct').textContent = pctStr(r.rentPct);
+  document.getElementById(prefix+'-delivery-pct').textContent = pctStr(r.deliveryPct);
+  document.getElementById(prefix+'-marketing-pct').textContent = pctStr(r.marketingPct);
 
   if(prefix === 'goal'){
     document.getElementById('goal-food-pct').textContent = r.foodAmt === null ? '' : fmt(r.foodAmt);
@@ -603,12 +625,20 @@ function computeAll(prefix){
   const foodInput = document.getElementById(prefix+'-food');
   const laborInput = document.getElementById(prefix+'-labor');
   const rentInput = document.getElementById(prefix+'-rent');
+  const deliveryInput = document.getElementById(prefix+'-delivery');
+  const marketingInput = document.getElementById(prefix+'-marketing');
 
   const salesVat = parseFloat(vatInput.value) || 0;
   const salesNet = parseFloat(netInput.value) || 0;
 
   const rentVal = numOrNull(rentInput);
   const rentPct = (salesNet > 0 && rentVal !== null) ? (rentVal/salesNet*100) : null;
+
+  const deliveryVal = numOrNull(deliveryInput);
+  const deliveryPct = (salesNet > 0 && deliveryVal !== null) ? (deliveryVal/salesNet*100) : null;
+
+  const marketingVal = numOrNull(marketingInput);
+  const marketingPct = (salesNet > 0 && marketingVal !== null) ? (marketingVal/salesNet*100) : null;
 
   let foodPct, laborPct, foodAmt, laborAmt;
 
@@ -628,7 +658,7 @@ function computeAll(prefix){
 
   const primePct = (foodPct === null && laborPct === null) ? null : ((foodPct||0) + (laborPct||0));
 
-  return { salesVat, salesNet, foodAmt, laborAmt, rentVal, foodPct, laborPct, rentPct, primePct };
+  return { salesVat, salesNet, foodAmt, laborAmt, rentVal, deliveryVal, marketingVal, foodPct, laborPct, rentPct, deliveryPct, marketingPct, primePct };
 }
 
 function gatherForSave(clientName){
@@ -638,9 +668,11 @@ function gatherForSave(clientName){
     client_name: clientName,
     current_sales_vat: c.salesVat, current_sales_net: c.salesNet,
     current_food: c.foodAmt, current_labor: c.laborAmt, current_rent: c.rentVal,
+    current_delivery_commission: c.deliveryVal, current_marketing: c.marketingVal,
     current_prime_pct: c.primePct,
     goal_sales_vat: g.salesVat, goal_sales_net: g.salesNet,
     goal_food_pct: g.foodPct, goal_labor_pct: g.laborPct, goal_rent: g.rentVal,
+    goal_delivery_commission: g.deliveryVal, goal_marketing: g.marketingVal,
     goal_prime_pct: g.primePct
   };
 }
@@ -714,6 +746,8 @@ function applyRecord(r){
   document.getElementById('current-food').value = r.current_food ?? '';
   document.getElementById('current-labor').value = r.current_labor ?? '';
   document.getElementById('current-rent').value = r.current_rent ?? '';
+  document.getElementById('current-delivery').value = r.current_delivery_commission ?? '';
+  document.getElementById('current-marketing').value = r.current_marketing ?? '';
   calc('current');
 
   document.getElementById('goal-sales-vat').value = r.goal_sales_vat ?? '';
@@ -723,6 +757,8 @@ function applyRecord(r){
   document.getElementById('goal-food').value = r.goal_food_pct ?? '';
   document.getElementById('goal-labor').value = r.goal_labor_pct ?? '';
   document.getElementById('goal-rent').value = r.goal_rent ?? '';
+  document.getElementById('goal-delivery').value = r.goal_delivery_commission ?? '';
+  document.getElementById('goal-marketing').value = r.goal_marketing ?? '';
   calc('goal', true);
 
   document.getElementById('save-client-name').value = r.client_name || '';

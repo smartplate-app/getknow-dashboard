@@ -234,6 +234,7 @@
     <img src="https://smartplatebasic.com/img/new_logo.png" alt="Smart Plate">
     <h1>Smart Plate - פגישת היכרות</h1>
     <div class="hebrew-line"><span>ניתוח עליות פריים קוסט לפני תחילת עבודה משותפת</span></div>
+    <div id="clientBadge" style="display:none;margin-top:12px;background:#0d9488;color:#fff;padding:6px 16px;border-radius:999px;font-size:13px;font-weight:700"></div>
   </header>
 
   <div class="tabs">
@@ -419,7 +420,9 @@
     <input type="text" id="save-client-name" placeholder="שם הלקוח / המסעדה" style="background:var(--card2);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:8px;font-size:14px;width:100%;max-width:320px;text-align:right;direction:rtl;margin-bottom:12px">
     <br>
     <button id="saveBtn" onclick="saveClientData()" style="background:var(--teal);color:#fff;border:none;padding:12px 30px;border-radius:10px;font-size:14px;font-weight:800;cursor:pointer">💾 שמור</button>
+    <button id="copyLinkBtn" onclick="copyPersonalLink()" style="background:var(--card2);color:var(--text);border:1px solid var(--border);padding:12px 20px;border-radius:10px;font-size:14px;font-weight:800;cursor:pointer;margin-inline-start:8px">🔗 קישור אישי ללקוח</button>
     <div id="saveStatus" style="margin-top:10px;font-size:13px;color:var(--muted)"></div>
+    <div id="linkBanner" style="display:none;margin-top:10px;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--text);word-break:break-all;direction:ltr;text-align:left"></div>
   </div>
 
   <footer>Smart Plate יועצים למסעדות — ניתוח פריים קוסט לפני תחילת עבודה משותפת</footer>
@@ -684,37 +687,28 @@ function fmtDate(iso){
 
 function loadSavedList(){
   const select = document.getElementById('saved-select');
+  const initialClient = getQueryParam('client');
   fetch('https://base44.app/api/apps/69b697029d0cd0fecb49189b/functions/saveGetKnowMeeting')
     .then(r => r.json())
     .then(data => {
       if(!data.success || !data.meetings || !data.meetings.length){
         select.innerHTML = '<option value="">אין רשומות שמורות עדיין</option>';
+        if(initialClient) loadRecordByClientName(initialClient);
         return;
       }
       savedRecords = data.meetings;
       select.innerHTML = savedRecords.map((m, i) =>
         `<option value="${i}">${m.client_name} — ${fmtDate(m.saved_at || m.created_date)}</option>`
       ).join('');
+      if(initialClient) loadRecordByClientName(initialClient);
     })
     .catch(() => {
       select.innerHTML = '<option value="">שגיאה בטעינת הרשימה</option>';
+      if(initialClient) showClientBadge(initialClient);
     });
 }
 
-function loadSelectedRecord(){
-  const select = document.getElementById('saved-select');
-  const status = document.getElementById('loadStatus');
-  const idx = select.value;
-  if(idx === ''){
-    status.textContent = '⚠️ בחר לקוח מהרשימה';
-    return;
-  }
-  const r = savedRecords[idx];
-  if(!r){
-    status.textContent = '❌ הרשומה לא נמצאה';
-    return;
-  }
-
+function applyRecord(r){
   document.getElementById('current-sales-vat').value = r.current_sales_vat ?? '';
   document.getElementById('current-sales-net').dataset.manual = 'false';
   document.getElementById('current-food').value = r.current_food ?? '';
@@ -732,14 +726,93 @@ function loadSelectedRecord(){
   calc('goal', true);
 
   document.getElementById('save-client-name').value = r.client_name || '';
-
   switchTab('current');
+  showClientBadge(r.client_name);
+}
+
+function loadSelectedRecord(){
+  const select = document.getElementById('saved-select');
+  const status = document.getElementById('loadStatus');
+  const idx = select.value;
+  if(idx === ''){
+    status.textContent = '⚠️ בחר לקוח מהרשימה';
+    return;
+  }
+  const r = savedRecords[idx];
+  if(!r){
+    status.textContent = '❌ הרשומה לא נמצאה';
+    return;
+  }
+  applyRecord(r);
   status.textContent = '✅ נטען: ' + r.client_name;
+}
+
+function showClientBadge(name){
+  const badge = document.getElementById('clientBadge');
+  if(!name){ badge.style.display = 'none'; return; }
+  badge.textContent = '👤 פגישה עבור: ' + name;
+  badge.style.display = 'inline-block';
+}
+
+// --- personal per-client link: ?client=NAME auto-loads that client's saved data on open ---
+function getQueryParam(name){
+  const params = new URLSearchParams(window.location.search);
+  return params.get(name);
+}
+
+function loadRecordByClientName(name){
+  const status = document.getElementById('loadStatus');
+  const target = name.trim().toLowerCase();
+  const match = savedRecords.find(m => (m.client_name || '').trim().toLowerCase() === target);
+  const select = document.getElementById('saved-select');
+
+  if(match){
+    const idx = savedRecords.indexOf(match);
+    if(select) select.value = String(idx);
+    applyRecord(match);
+    if(status) status.textContent = '✅ נטען אוטומטית עבור: ' + match.client_name;
+  } else {
+    // no saved data yet for this client - just prefill the name so it's ready to save
+    document.getElementById('save-client-name').value = name;
+    showClientBadge(name);
+    if(status) status.textContent = 'ℹ️ אין עדיין נתונים שמורים ל-' + name + ' — אפשר למלא ולשמור';
+  }
+}
+
+function copyPersonalLink(){
+  const status = document.getElementById('saveStatus');
+  const banner = document.getElementById('linkBanner');
+  const name = document.getElementById('save-client-name').value.trim();
+  if(!name){
+    status.textContent = '⚠️ יש להזין שם לקוח כדי לייצר קישור אישי';
+    document.getElementById('save-client-name').focus();
+    return;
+  }
+  const base = window.location.origin + window.location.pathname;
+  const link = base + '?client=' + encodeURIComponent(name);
+
+  banner.style.display = 'block';
+  banner.textContent = link;
+
+  const done = (ok) => {
+    status.textContent = ok ? '🔗 הקישור האישי הועתק! אפשר לשלוח אותו ללקוח' : '🔗 הקישור מוצג למטה — סמן והעתק ידנית';
+  };
+
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(link).then(() => done(true)).catch(() => done(false));
+  } else {
+    done(false);
+  }
 }
 
 calc('current');
 mirrorToGoal();
 loadSavedList();
+
+const initialClient = getQueryParam('client');
+if(initialClient){
+  showClientBadge(initialClient);
+}
 </script>
 </body>
 </html>

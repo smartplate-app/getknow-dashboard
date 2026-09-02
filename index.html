@@ -661,10 +661,10 @@ function computeAll(prefix){
   return { salesVat, salesNet, foodAmt, laborAmt, rentVal, deliveryVal, marketingVal, foodPct, laborPct, rentPct, deliveryPct, marketingPct, primePct };
 }
 
-function gatherForSave(clientName){
+function gatherForSave(clientName, recordId){
   const c = computeAll('current');
   const g = computeAll('goal');
-  return {
+  const payload = {
     client_name: clientName,
     current_sales_vat: c.salesVat, current_sales_net: c.salesNet,
     current_food: c.foodAmt, current_labor: c.laborAmt, current_rent: c.rentVal,
@@ -675,6 +675,8 @@ function gatherForSave(clientName){
     goal_delivery_commission: g.deliveryVal, goal_marketing: g.marketingVal,
     goal_prime_pct: g.primePct
   };
+  if(recordId){ payload.id = recordId; }
+  return payload;
 }
 
 function saveClientData(){
@@ -689,7 +691,13 @@ function saveClientData(){
     return;
   }
 
-  const payload = gatherForSave(clientName);
+  // Update in place if this is the same client that's currently loaded.
+  // A different name means the user explicitly wants a separate client/record.
+  const isSameLoadedClient = currentRecordId && currentRecordName &&
+    clientName.toLowerCase() === currentRecordName.toLowerCase();
+  const recordId = isSameLoadedClient ? currentRecordId : null;
+
+  const payload = gatherForSave(clientName, recordId);
   btn.disabled = true;
   status.textContent = 'שומר...';
 
@@ -700,7 +708,14 @@ function saveClientData(){
   })
     .then(r => r.json())
     .then(data => {
-      status.textContent = data.success ? ('✅ נשמר בהצלחה עבור ' + clientName) : '❌ שגיאה בשמירה, נסה שוב';
+      if(data.success){
+        status.textContent = recordId ? ('✅ הנתונים עודכנו עבור ' + clientName) : ('✅ נשמר בהצלחה עבור ' + clientName);
+        currentRecordId = data.record && data.record.id ? data.record.id : recordId;
+        currentRecordName = clientName;
+        loadSavedList();
+      } else {
+        status.textContent = '❌ שגיאה בשמירה, נסה שוב';
+      }
       btn.disabled = false;
     })
     .catch(() => {
@@ -710,6 +725,8 @@ function saveClientData(){
 }
 
 let savedRecords = [];
+let currentRecordId = null;
+let currentRecordName = null;
 
 function fmtDate(iso){
   if(!iso) return '';
@@ -762,6 +779,8 @@ function applyRecord(r){
   calc('goal', true);
 
   document.getElementById('save-client-name').value = r.client_name || '';
+  currentRecordId = r.id || null;
+  currentRecordName = r.client_name || null;
   switchTab('current');
   showClientBadge(r.client_name);
 }
@@ -809,6 +828,8 @@ function loadRecordByClientName(name){
     if(status) status.textContent = '✅ נטען אוטומטית עבור: ' + match.client_name;
   } else {
     // no saved data yet for this client - just prefill the name so it's ready to save
+    currentRecordId = null;
+    currentRecordName = null;
     document.getElementById('save-client-name').value = name;
     showClientBadge(name);
     if(status) status.textContent = 'ℹ️ אין עדיין נתונים שמורים ל-' + name + ' — אפשר למלא ולשמור';
